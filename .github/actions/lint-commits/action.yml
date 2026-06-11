@@ -1,0 +1,44 @@
+name: Lint Commits
+description: Lint commit messages using commitlint
+inputs:
+  from_ref:
+    description: Git reference to start checking commits from
+    required: false
+    default: ""
+  to_ref:
+    description: Git reference to stop checking commits at
+    required: false
+    default: "HEAD"
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version-file: ".nvmrc"
+        cache: "npm"
+
+    - name: Install dependencies
+      shell: bash
+      run: npm clean-install
+
+    - name: Determine commit range
+      id: commit-range
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.from_ref }}" ]; then
+          echo "FROM_REF=${{ inputs.from_ref }}" >> $GITHUB_OUTPUT
+        else
+          # Default: from the last tag to the current HEAD
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            echo "FROM_REF=$LAST_TAG" >> $GITHUB_OUTPUT
+          else
+            # If no tags exist, use the first commit
+            echo "FROM_REF=$(git rev-list --max-parents=0 HEAD)" >> $GITHUB_OUTPUT
+          fi
+        fi
+
+    - name: Lint commits
+      shell: bash
+      run: npx commitlint --from "${{ steps.commit-range.outputs.FROM_REF }}" --to "${{ inputs.to_ref }}" --verbose

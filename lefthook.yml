@@ -1,0 +1,27 @@
+python_glob: &python_glob "**/*.{py,pyi}"
+
+pre-push:
+  jobs:
+    - name: verify formatting (prettier)
+      run: npx prettier --check --ignore-unknown {all_files}
+    - name: verify formatting (black)
+      run: uv run black --check {all_files}
+      glob: *python_glob
+    - name: verify lint rules (ruff)
+      run: uv run ruff check {all_files}
+      glob: *python_glob
+    - name: verify Python syntax
+      run: uv run python -m compileall src tests
+    - name: run tests
+      run: uv run pytest
+
+pre-commit:
+  jobs:
+    - name: verify formatting for staged files (prettier)
+      run: npx prettier --check --ignore-unknown {staged_files}
+    - name: verify formatting for staged files (black)
+      run: uv run black --check {staged_files}
+      glob: *python_glob
+    - name: verify lint rules for staged files (ruff)
+      run: uv run ruff check {staged_files}
+      glob: *python_glob

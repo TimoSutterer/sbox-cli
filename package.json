@@ -1,0 +1,19 @@
+{
+  "scripts": {
+    "test": "uv run pytest",
+    "build": "rm -rf dist && uv build",
+    "syntax:check": "uv run python -m compileall src tests",
+    "package:check": "npm run build && uv run twine check dist/*",
+    "style:check": "prettier --check . && uv run black --check . && uv run ruff check .",
+    "style:fix": "prettier --write . && uv run black . && uv run ruff check --fix .",
+    "release:check": "uv run semantic-release --noop version"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.0.2",
+    "@commitlint/config-conventional": "^21.0.2",
+    "prettier": "^3.8.3",
+    "prettier-plugin-sh": "^0.18.1",
+    "prettier-plugin-toml": "^2.0.6"
+  },
+  "private": true
+}

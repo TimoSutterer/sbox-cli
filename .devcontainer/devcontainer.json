@@ -1,0 +1,119 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/debian
+{
+  "name": "Python + Node.js Dev Container",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "24"
+    }
+  },
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "yarn install",
+  // Configure tool-specific properties.
+  // "customizations": {},
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "charliermarsh.ruff",
+        "esbenp.prettier-vscode",
+        "ms-python.black-formatter",
+        "ms-azuretools.vscode-containers",
+        "streetsidesoftware.code-spell-checker",
+        // Disable autopep8 (pre-installed in devcontainer image)
+        "-ms-python.autopep8"
+      ],
+      "settings": {
+        // -- Global settings --
+        // Ensure a newline is present at the end of every file
+        "files.insertFinalNewline": true,
+        // Remove any extra blank lines so only a single final newline remains
+        "files.trimFinalNewlines": true,
+        // Format files on save
+        "editor.formatOnSave": true,
+        // Set default formatter to Prettier
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        // Use spaces instead of tabs
+        // This should match the Prettier config to avoid weird formatting changes on save
+        "editor.insertSpaces": true,
+        // 2 spaces per indent level
+        // This should match the Prettier config to avoid weird formatting changes on save
+        "editor.tabSize": 2,
+        // Disable built-in formatters to avoid conflicts with Prettier
+        "html.format.enable": false,
+        "css.format.enable": false,
+        "scss.format.enable": false,
+        "less.format.enable": false,
+        "json.format.enable": false,
+        "javascript.format.enable": false,
+        "typescript.format.enable": false,
+        "yaml.format.enable": false,
+        "markdown.format.enable": false,
+        "graphql.format.enable": false,
+        "handlebars.format.enable": false,
+        "vue.format.enable": false,
+        "svelte.plugin.svelte.format.enable": false,
+        "liquid.format.enable": false,
+        "php.format.enable": false,
+        // Disable automatic detection and forwarding of devcontainer ports
+        "remote.autoForwardPorts": false,
+
+        // -- Python-specific settings --
+        // Disable legacy linters to avoid conflicts with Ruff
+        "python.linting.enabled": false,
+        "python.linting.flake8Enabled": false,
+        "python.linting.pylintEnabled": false,
+        // Disable legacy formatters to avoid conflicts with Black
+        "python.formatting.provider": "none",
+        // Use Pylance as the language server
+        // Provides IntelliSense, auto-imports, and type checking
+        "python.languageServer": "Pylance",
+        // Configure Pylance's type checking behavior
+        "python.analysis.typeCheckingMode": "standard", // Or "strict" to enforce stricter typing standards
+        // Suggest missing imports
+        "python.analysis.autoImportCompletions": true,
+        // Find import paths to improve completion accuracy for large or nested packages
+        "python.analysis.autoSearchPaths": true,
+        // Let Pylance read installed package code to improve symbol discovery
+        "python.analysis.useLibraryCodeForTypes": true,
+        // Enable indexing for faster and more complete import suggestions
+        "python.analysis.indexing": true,
+        // Add parentheses when you pick a function from autocomplete
+        "python.analysis.completeFunctionParens": true,
+        // Disable overlapping Pylance checks already managed by Ruff
+        "python.analysis.diagnosticSeverityOverrides": {
+          "reportUnusedImport": "none", // Ruff handles this (F401)
+          "reportUndefinedVariable": "none", // Ruff handles this (F821)
+          "reportUnusedVariable": "none", // Ruff handles this (F841)
+          "reportDuplicateImport": "none", // Ruff handles this (F811)
+          "reportImplicitStringConcatenation": "none", // Ruff handles this (ISC001)
+          "reportInvalidStringEscapeSequence": "none" // Ruff handles this (W605)
+        },
+
+        // -- Apply to Python files --
+        "[python]": {
+          // Auto-fix linting issues and sort imports on save with Ruff
+          "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+          },
+          // 4 spaces per indent level
+          "editor.tabSize": 4,
+          // Format code on save with Black
+          "editor.defaultFormatter": "ms-python.black-formatter",
+          // Show suggestions inside strings (useful for f-strings)
+          "editor.quickSuggestions": {
+            "strings": true
+          }
+        }
+      }
+    }
+  }
+}

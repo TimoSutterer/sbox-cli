@@ -1,0 +1,144 @@
+[project]
+name = "sbox-cli"
+version = "0.0.0"
+description = "Project-scoped Docker sandboxes for development and AI-agent workflows."
+readme = "README.md"
+authors = [
+  { name = "Timo Sutterer", email = "TimoSutterer@users.noreply.github.com" },
+]
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+dependencies = []
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Software Development",
+  "Topic :: System :: Systems Administration",
+]
+
+[project.urls]
+Repository = "https://github.com/TimoSutterer/sbox-cli"
+
+[project.scripts]
+sbox = "sbox_cli.cli:main"
+
+[dependency-groups]
+dev = [
+  "black>=26.5.1",
+  "pytest>=9.0.3",
+  "python-semantic-release>=10.5.3",
+  "ruff>=0.15.16",
+  "twine>=6.2.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.16,<0.12.0"]
+build-backend = "uv_build"
+
+[tool.black]
+line-length = 88           # Black's default; keep this the single source of truth
+target-version = ["py311"] # Adjust to your lowest supported Python version
+
+[tool.ruff]
+line-length = 88         # Match Black so wrap/length checks align
+target-version = "py311" # Align with Black / project
+
+[tool.ruff.lint]
+select = [
+  # Core linting and import hygiene (baseline correctness)
+  "E", # pycodestyle errors: enforce standard Python style
+  "W", # pycodestyle warnings: minor style warnings
+  "F", # pyflakes: catch unused imports, undefined names, etc.
+  "I", # isort: enforce consistent import order
+  # Syntax modernization (safe transformation)
+  "UP", # pyupgrade: modernize Python syntax and patterns
+  # Naming and built-in safety rules (consistency + clarity)
+  "N", # pep8-naming: enforce naming conventions
+  "A", # flake8-builtins: prevent shadowing of Python built-in names
+  # Readability, maintainability, and style improvements
+  "B",   # flake8-bugbear: detect likely bugs and design issues
+  "C4",  # flake8-comprehensions: optimize and clean up comprehensions
+  "COM", # flake8-commas: ensure consistent trailing comma usage
+  "ISC", # flake8-implicit-str-concat: prevent implicit string concatenation
+  # complexity enforcement
+  "C90", # mccabe: enforce cyclomatic complexity limits
+]
+ignore = [
+  # Ignore checks that conflict with Black
+  "E203",   # Whitespace before ':' (Black's slicing style)
+  "E501",   # Line length (let Black handle wrapping)
+  "COM819", # Prohibited trailing comma (use Black's "magic trailing comma")
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = [
+  "F401", # Allow re-export patterns (unused imports in package inits)
+]
+
+# Strongly opinionated, Black-compatible isort settings
+[tool.ruff.lint.isort]
+# Sort imports alphabetically within each section
+force-sort-within-sections = true
+# Combine multiple 'as' imports from the same module into one line
+combine-as-imports = true
+# Group 'from ... import ...' members by type (classes, constants, functions)
+order-by-type = true
+# Split multi-import lines when there's a trailing comma (Black-compatible)
+split-on-trailing-comma = true
+# Define the order of import sections
+section-order = [
+  "future",           # __future__ imports first
+  "standard-library", # Then built-in Python modules
+  "third-party",      # Then external dependencies (e.g., requests, numpy)
+  "first-party",      # Then your project's own modules
+  "local-folder",     # Finally relative imports
+]
+
+# Explicitly define first-party modules for consistent sorting
+known-first-party = ["sbox_cli"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.semantic_release]
+allow_zero_version = true
+assets = ["CHANGELOG.md", "uv.lock"]
+build_command = "python -m pip install uv && uv lock && rm -rf dist && uv build"
+commit_author = "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>"
+commit_message = "chore(release): v{version} [skip ci]"
+commit_parser = "conventional"
+major_on_zero = true
+tag_format = "v{version}"
+version_toml = ["pyproject.toml:project.version"]
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
+
+[tool.semantic_release.changelog]
+exclude_commit_patterns = [
+  '''build(?:\([^)]*\))?: .+''',
+  '''chore(?:\([^)]*\))?: .+''',
+  '''ci(?:\([^)]*\))?: .+''',
+  '''docs(?:\([^)]*\))?: .+''',
+  '''refactor(?:\([^)]*\))?: .+''',
+  '''style(?:\([^)]*\))?: .+''',
+  '''test(?:\([^)]*\))?: .+''',
+]
+
+[tool.semantic_release.publish]
+dist_glob_patterns = ["dist/*"]
+upload_to_vcs_release = true
+
+[tool.semantic_release.remote]
+token = { env = "GH_TOKEN" }
+type = "github"
