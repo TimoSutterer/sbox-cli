@@ -1,6 +1,6 @@
 [project]
 name = "sbox-cli"
-version = "0.0.0"
+version = "0.1.0"
 description = "Project-scoped Docker sandboxes for development and AI-agent workflows."
 readme = "README.md"
 authors = [
